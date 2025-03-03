@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
+// Use the same API URL configuration as AuthContext
+const PRODUCTION_URL = 'https://training-diary-backend.onrender.com';
+const API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000'
+  : PRODUCTION_URL;
+
 const Profile = () => {
   const { user, setUser } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -22,7 +28,7 @@ const Profile = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/users/profile', {
+      const response = await fetch(`${API_URL}/api/users/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

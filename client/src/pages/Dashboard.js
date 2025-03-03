@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
+// Use the same API URL configuration as AuthContext
+const PRODUCTION_URL = 'https://training-diary-backend.onrender.com';
+const API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000'
+  : PRODUCTION_URL;
+
 const Dashboard = () => {
   const { user } = useAuth();
   const [recentWorkouts, setRecentWorkouts] = useState([]);
@@ -13,15 +19,21 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem('token');
         const [workoutsResponse, nutritionResponse] = await Promise.all([
-          fetch('http://localhost:5000/api/workouts/recent', {
+          fetch(`${API_URL}/api/workouts/recent`, {
             headers: {
-              'Authorization': `Bearer ${token}`
-            }
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            mode: 'cors'
           }),
-          fetch('http://localhost:5000/api/nutrition/recent', {
+          fetch(`${API_URL}/api/nutrition/recent`, {
             headers: {
-              'Authorization': `Bearer ${token}`
-            }
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            mode: 'cors'
           })
         ]);
 

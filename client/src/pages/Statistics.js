@@ -26,6 +26,12 @@ ChartJS.register(
   ArcElement
 );
 
+// Use the same API URL configuration as AuthContext
+const PRODUCTION_URL = 'https://training-diary-backend.onrender.com';
+const API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000'
+  : PRODUCTION_URL;
+
 const Statistics = () => {
   const { user } = useAuth();
   const [workouts, setWorkouts] = useState([]);
@@ -41,15 +47,21 @@ const Statistics = () => {
     try {
       const token = localStorage.getItem('token');
       const [workoutsResponse, nutritionResponse] = await Promise.all([
-        fetch(`http://localhost:5000/api/workouts?timeRange=${timeRange}`, {
+        fetch(`${API_URL}/api/workouts?timeRange=${timeRange}`, {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          mode: 'cors'
         }),
-        fetch(`http://localhost:5000/api/nutrition?timeRange=${timeRange}`, {
+        fetch(`${API_URL}/api/nutrition?timeRange=${timeRange}`, {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          mode: 'cors'
         })
       ]);
 

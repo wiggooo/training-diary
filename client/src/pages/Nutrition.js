@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
+// Use the same API URL configuration as AuthContext
+const PRODUCTION_URL = 'https://training-diary-backend.onrender.com';
+const API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000'
+  : PRODUCTION_URL;
+
 const Nutrition = () => {
   const { user } = useAuth();
   const [nutritionData, setNutritionData] = useState([]);
@@ -20,10 +26,13 @@ const Nutrition = () => {
   const fetchNutritionData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/nutrition', {
+      const response = await fetch(`${API_URL}/api/nutrition`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        mode: 'cors'
       });
 
       if (response.ok) {
@@ -92,12 +101,14 @@ const Nutrition = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/nutrition', {
+      const response = await fetch(`${API_URL}/api/nutrition`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
+        credentials: 'include',
+        mode: 'cors',
         body: JSON.stringify({
           ...newNutrition,
           totalDailyCalories: calculateTotalCalories()
