@@ -22,13 +22,25 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/training-diary', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.log('MongoDB Connection Error:', err));
+// MongoDB Connection with retry logic
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/training-diary', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+      family: 4 // Use IPv4, skip trying IPv6
+    });
+    console.log('MongoDB Connected');
+  } catch (err) {
+    console.error('MongoDB Connection Error:', err);
+    // Retry connection after 5 seconds
+    setTimeout(connectDB, 5000);
+  }
+};
+
+connectDB();
 
 // Routes
 app.use('/api/workouts', require('./routes/workouts'));
