@@ -58,7 +58,10 @@ const Workouts = () => {
     setNewWorkout(prev => ({
       ...prev,
       exercises: prev.exercises.map((exercise, i) =>
-        i === index ? { ...exercise, [field]: value } : exercise
+        i === index ? { 
+          ...exercise, 
+          [field]: field === 'name' ? value : (value === '' ? 0 : Number(value))
+        } : exercise
       )
     }));
   };
@@ -66,6 +69,18 @@ const Workouts = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Validate form data before submission
+      const workoutToSubmit = {
+        ...newWorkout,
+        duration: Number(newWorkout.duration) || 0,
+        exercises: newWorkout.exercises.map(exercise => ({
+          ...exercise,
+          sets: Number(exercise.sets) || 0,
+          reps: Number(exercise.reps) || 0,
+          weight: Number(exercise.weight) || 0
+        }))
+      };
+
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/api/workouts`, {
         method: 'POST',
@@ -75,23 +90,27 @@ const Workouts = () => {
         },
         credentials: 'include',
         mode: 'cors',
-        body: JSON.stringify(newWorkout)
+        body: JSON.stringify(workoutToSubmit)
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setWorkouts(prev => [data, ...prev]);
-        setShowAddForm(false);
-        setNewWorkout({
-          type: 'gym',
-          bodyParts: [],
-          duration: 0,
-          exercises: [],
-          notes: ''
-        });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add workout');
       }
+
+      const data = await response.json();
+      setWorkouts(prev => [data, ...prev]);
+      setShowAddForm(false);
+      setNewWorkout({
+        type: 'gym',
+        bodyParts: [],
+        duration: 0,
+        exercises: [],
+        notes: ''
+      });
     } catch (error) {
       console.error('Error adding workout:', error);
+      // You might want to show this error to the user in the UI
     }
   };
 
@@ -192,22 +211,22 @@ const Workouts = () => {
                     <input
                       type="number"
                       placeholder="Sets"
-                      value={exercise.sets}
-                      onChange={(e) => handleExerciseChange(index, 'sets', parseInt(e.target.value))}
+                      value={exercise.sets || ''}
+                      onChange={(e) => handleExerciseChange(index, 'sets', e.target.value)}
                       className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     />
                     <input
                       type="number"
                       placeholder="Reps"
-                      value={exercise.reps}
-                      onChange={(e) => handleExerciseChange(index, 'reps', parseInt(e.target.value))}
+                      value={exercise.reps || ''}
+                      onChange={(e) => handleExerciseChange(index, 'reps', e.target.value)}
                       className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     />
                     <input
                       type="number"
                       placeholder="Weight (kg)"
-                      value={exercise.weight}
-                      onChange={(e) => handleExerciseChange(index, 'weight', parseFloat(e.target.value))}
+                      value={exercise.weight || ''}
+                      onChange={(e) => handleExerciseChange(index, 'weight', e.target.value)}
                       className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     />
                   </div>
