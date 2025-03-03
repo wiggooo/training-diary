@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
+// Use the same API URL configuration as AuthContext
+const PRODUCTION_URL = 'https://training-diary-backend.onrender.com';
+const API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000'
+  : PRODUCTION_URL;
+
 const Workouts = () => {
   const { user } = useAuth();
   const [workouts, setWorkouts] = useState([]);
@@ -21,10 +27,13 @@ const Workouts = () => {
   const fetchWorkouts = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/workouts', {
+      const response = await fetch(`${API_URL}/api/workouts`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        mode: 'cors'
       });
 
       if (response.ok) {
@@ -58,12 +67,14 @@ const Workouts = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/workouts', {
+      const response = await fetch(`${API_URL}/api/workouts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
+        credentials: 'include',
+        mode: 'cors',
         body: JSON.stringify(newWorkout)
       });
 
