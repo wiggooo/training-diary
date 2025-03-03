@@ -7,6 +7,10 @@ const API_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:5000'
   : PRODUCTION_URL;
 
+// Debug logging
+console.log('Current hostname:', window.location.hostname);
+console.log('Using API URL:', API_URL);
+
 const Workouts = () => {
   const { user } = useAuth();
   const [workouts, setWorkouts] = useState([]);
@@ -27,6 +31,7 @@ const Workouts = () => {
   const fetchWorkouts = async () => {
     try {
       const token = localStorage.getItem('token');
+      console.log('Fetching workouts from:', `${API_URL}/api/workouts`);
       const response = await fetch(`${API_URL}/api/workouts`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -39,6 +44,8 @@ const Workouts = () => {
       if (response.ok) {
         const data = await response.json();
         setWorkouts(data);
+      } else {
+        console.error('Failed to fetch workouts:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error fetching workouts:', error);
@@ -82,6 +89,7 @@ const Workouts = () => {
       };
 
       const token = localStorage.getItem('token');
+      console.log('Submitting workout to:', `${API_URL}/api/workouts`);
       const response = await fetch(`${API_URL}/api/workouts`, {
         method: 'POST',
         headers: {
