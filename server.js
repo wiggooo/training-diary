@@ -25,20 +25,59 @@ app.use(express.json());
 // MongoDB Connection with retry logic
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/training-diary', {
+    console.log('Attempting to connect to MongoDB...');
+    console.log('MongoDB URI:', process.env.MONGODB_URI ? 'URI is set' : 'Using default URI');
+    
+    const options = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
-      family: 4 // Use IPv4, skip trying IPv6
-    });
-    console.log('MongoDB Connected');
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
+      retryWrites: true,
+      w: 'majority',
+      retryReads: true,
+      maxPoolSize: 10,
+      minPoolSize: 5
+    };
+
+    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/training-diary', options);
+    console.log('MongoDB Connected Successfully');
+    console.log('Host:', conn.connection.host);
+    console.log('Port:', conn.connection.port);
+    console.log('Database:', conn.connection.name);
   } catch (err) {
-    console.error('MongoDB Connection Error:', err);
-    // Retry connection after 5 seconds
-    setTimeout(connectDB, 5000);
+    console.error('MongoDB Connection Error Details:', {
+      name: err.name,
+      message: err.message,
+      code: err.code,
+      stack: err.stack
+    });
+    
+    // Only retry if it's a connection error
+    if (err.name === 'MongoNetworkError' || err.name === 'MongoServerSelectionError') {
+      console.log('Retrying connection in 5 seconds...');
+      setTimeout(connectDB, 5000);
+    } else {
+      console.error('Fatal MongoDB error, not retrying:', err);
+      process.exit(1);
+    }
   }
 };
+
+// Handle MongoDB connection events
+mongoose.connection.on('error', err => {
+  console.error('MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('MongoDB disconnected. Attempting to reconnect...');
+  connectDB();
+});
+
+mongoose.connection.on('connected', () => {
+  console.log('MongoDB connected successfully');
+});
 
 connectDB();
 
