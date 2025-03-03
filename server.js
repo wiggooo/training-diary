@@ -11,18 +11,12 @@ const app = express();
 // CORS configuration
 const corsOptions = {
   origin: ['https://wiggos-workout-tracker.netlify.app', 'http://localhost:3000'],
-  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  maxAge: 600 // Cache preflight requests for 10 minutes
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 // Apply CORS middleware
 app.use(cors(corsOptions));
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
 
 // Middleware
 app.use(express.json());
