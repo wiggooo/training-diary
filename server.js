@@ -13,9 +13,12 @@ const corsOptions = {
   origin: [
     'http://localhost:3000',
     'https://gleaming-entremet-2fbfde.netlify.app',
-    'https://training-diary.netlify.app'
+    'https://training-diary.netlify.app',
+    'https://wiggos-workout-tracker.netlify.app'
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 // Middleware
