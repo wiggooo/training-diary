@@ -8,19 +8,24 @@ dotenv.config();
 
 const app = express();
 
-// Enable CORS for all routes
-app.use(cors({
-  origin: true, // Allow all origins
+// CORS configuration
+const corsOptions = {
+  origin: ['https://wiggos-workout-tracker.netlify.app', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  maxAge: 600 // Cache preflight requests for 10 minutes
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 // Middleware
 app.use(express.json());
-
-// Add CORS headers manually for preflight requests
-app.options('*', cors());
 
 // MongoDB Connection with retry logic
 const connectDB = async () => {

@@ -37,8 +37,12 @@ export const AuthProvider = ({ children }) => {
   const fetchUserData = async (token) => {
     try {
       const response = await fetch(`${API_URL}/api/users/me`, {
+        method: 'GET',
+        credentials: 'include',
+        mode: 'cors',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
       
@@ -60,6 +64,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await fetch(`${API_URL}/api/users/login`, {
         method: 'POST',
+        credentials: 'include',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -84,6 +90,8 @@ export const AuthProvider = ({ children }) => {
       console.log('Registering with API URL:', API_URL);
       const response = await fetch(`${API_URL}/api/users/register`, {
         method: 'POST',
+        credentials: 'include',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json'
         },
