@@ -8,16 +8,19 @@ const auth = require('../middleware/auth');
 // Register user
 router.post('/register', async (req, res) => {
   try {
+    console.log('Registration request received:', req.body);
     const { name, email, password } = req.body;
 
     // Validate input
     if (!name || !email || !password) {
+      console.log('Missing required fields');
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
     // Check if user already exists
     let user = await User.findOne({ email });
     if (user) {
+      console.log('User already exists:', email);
       return res.status(400).json({ message: 'User with this email already exists' });
     }
 
@@ -28,6 +31,7 @@ router.post('/register', async (req, res) => {
       password
     });
 
+    console.log('Saving new user:', { name, email });
     await user.save();
 
     // Create JWT token
@@ -37,6 +41,7 @@ router.post('/register', async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    console.log('User registered successfully');
     res.status(201).json({
       token,
       user: {
@@ -51,7 +56,10 @@ router.post('/register', async (req, res) => {
     if (error.name === 'ValidationError') {
       return res.status(400).json({ message: error.message });
     }
-    res.status(500).json({ message: 'Server error during registration' });
+    res.status(500).json({ 
+      message: 'Server error during registration',
+      error: error.message 
+    });
   }
 });
 
