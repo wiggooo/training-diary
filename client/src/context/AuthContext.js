@@ -1,16 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Log the environment variable to debug
-console.log('Environment variables:', {
-  REACT_APP_API_URL: process.env.REACT_APP_API_URL,
-  NODE_ENV: process.env.NODE_ENV
-});
+// Hardcode the production URL
+const PRODUCTION_URL = 'https://training-diary-backend.onrender.com';
+const API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000'
+  : PRODUCTION_URL;
 
-// Use a more explicit API URL configuration
-const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://training-diary-backend.onrender.com'
-  : (process.env.REACT_APP_API_URL || 'http://localhost:5000');
-
+console.log('Current hostname:', window.location.hostname);
 console.log('Using API URL:', API_URL);
 
 const AuthContext = createContext(null);
