@@ -1,12 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import API_URL from '../config/api';
 
-// Hardcode the production URL
-const PRODUCTION_URL = 'https://training-diary-backend.onrender.com';
-const API_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000'
-  : PRODUCTION_URL;
-
-console.log('Current hostname:', window.location.hostname);
+// Debug logging
+console.log('Environment:', process.env.NODE_ENV);
 console.log('Using API URL:', API_URL);
 
 const AuthContext = createContext(null);
@@ -37,10 +33,8 @@ export const AuthProvider = ({ children }) => {
   const fetchUserData = async (token) => {
     try {
       const response = await fetch(`${API_URL}/api/users/me`, {
-        method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`
         }
       });
       
