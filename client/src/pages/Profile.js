@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-
-// Use the same API URL configuration as AuthContext
-const PRODUCTION_URL = 'https://training-diary-backend.onrender.com';
-const API_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000'
-  : PRODUCTION_URL;
+import API_URL from '../config/api';
+import BackButton from '../components/BackButton';
 
 const Profile = () => {
   const { user, setUser } = useAuth();
@@ -58,121 +54,128 @@ const Profile = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white shadow rounded-lg p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Profile Settings</h1>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center mb-6">
+        <BackButton />
+        <h1 className="text-3xl font-bold text-gray-900 ml-4">Profile</h1>
+      </div>
+      
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white shadow rounded-lg p-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-6">Profile Settings</h1>
 
-        {message.text && (
-          <div
-            className={`mb-4 p-4 rounded-md ${
-              message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
+          {message.text && (
+            <div
+              className={`mb-4 p-4 rounded-md ${
+                message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+              }`}
+            >
+              {message.text}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Name</label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                required
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              required
-            />
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                required
+              />
+            </div>
 
-          <div className="border-t pt-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Fitness Goals</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Weekly Workout Goal
-                </label>
-                <input
-                  type="number"
-                  value={formData.goals.weeklyWorkouts}
-                  onChange={(e) =>
-                    setFormData(prev => ({
-                      ...prev,
-                      goals: {
-                        ...prev.goals,
-                        weeklyWorkouts: parseInt(e.target.value)
-                      }
-                    }))
-                  }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  min="0"
-                />
-              </div>
+            <div className="border-t pt-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Fitness Goals</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Weekly Workout Goal
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.goals.weeklyWorkouts}
+                    onChange={(e) =>
+                      setFormData(prev => ({
+                        ...prev,
+                        goals: {
+                          ...prev.goals,
+                          weeklyWorkouts: parseInt(e.target.value)
+                        }
+                      }))
+                    }
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    min="0"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Daily Calorie Goal
-                </label>
-                <input
-                  type="number"
-                  value={formData.goals.dailyCalories}
-                  onChange={(e) =>
-                    setFormData(prev => ({
-                      ...prev,
-                      goals: {
-                        ...prev.goals,
-                        dailyCalories: parseInt(e.target.value)
-                      }
-                    }))
-                  }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  min="0"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Daily Calorie Goal
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.goals.dailyCalories}
+                    onChange={(e) =>
+                      setFormData(prev => ({
+                        ...prev,
+                        goals: {
+                          ...prev.goals,
+                          dailyCalories: parseInt(e.target.value)
+                        }
+                      }))
+                    }
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    min="0"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Daily Water Intake Goal (ml)
-                </label>
-                <input
-                  type="number"
-                  value={formData.goals.dailyWater}
-                  onChange={(e) =>
-                    setFormData(prev => ({
-                      ...prev,
-                      goals: {
-                        ...prev.goals,
-                        dailyWater: parseInt(e.target.value)
-                      }
-                    }))
-                  }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  min="0"
-                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Daily Water Intake Goal (ml)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.goals.dailyWater}
+                    onChange={(e) =>
+                      setFormData(prev => ({
+                        ...prev,
+                        goals: {
+                          ...prev.goals,
+                          dailyWater: parseInt(e.target.value)
+                        }
+                      }))
+                    }
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    min="0"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              {loading ? 'Saving...' : 'Save Changes'}
-            </button>
-          </div>
-        </form>
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                {loading ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-
-// Use the same API URL configuration as AuthContext
-const PRODUCTION_URL = 'https://training-diary-backend.onrender.com';
-const API_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000'
-  : PRODUCTION_URL;
+import API_URL from '../config/api';
 
 const Dashboard = () => {
   const { user } = useAuth();
