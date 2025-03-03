@@ -8,22 +8,19 @@ dotenv.config();
 
 const app = express();
 
-// CORS configuration
-const corsOptions = {
-  origin: [
-    'http://localhost:3000',
-    'https://gleaming-entremet-2fbfde.netlify.app',
-    'https://training-diary.netlify.app',
-    'https://wiggos-workout-tracker.netlify.app'
-  ],
+// Enable CORS for all routes
+app.use(cors({
+  origin: true, // Allow all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 
 // Middleware
-app.use(cors(corsOptions));
 app.use(express.json());
+
+// Add CORS headers manually for preflight requests
+app.options('*', cors());
 
 // MongoDB Connection with retry logic
 const connectDB = async () => {
