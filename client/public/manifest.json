@@ -1,6 +1,7 @@
 {
   "short_name": "Training Diary",
   "name": "Training Diary - Track Your Progress",
+  "version": "1.0.0",
   "icons": [
     {
       "src": "favicon.ico",

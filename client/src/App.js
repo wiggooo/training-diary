@@ -12,6 +12,7 @@ import Profile from './pages/Profile';
 import MobileNav from './components/MobileNav';
 import SplashScreen from './components/SplashScreen';
 import logo from './assets/logo.jpg';
+import UpdateChecker from './components/UpdateChecker';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -101,6 +102,7 @@ const AppContent = () => {
           </Routes>
         </main>
         <MobileNav />
+        <UpdateChecker />
       </div>
     </>
   );
