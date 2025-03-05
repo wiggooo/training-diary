@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
@@ -10,6 +10,8 @@ import Nutrition from './pages/Nutrition';
 import Statistics from './pages/Statistics';
 import Profile from './pages/Profile';
 import MobileNav from './components/MobileNav';
+import SplashScreen from './components/SplashScreen';
+import logo from './assets/logo.jpg';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -31,12 +33,28 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  const { user } = useAuth();
+  const [showSplash, setShowSplash] = useState(true);
+
   return (
     <AuthProvider>
-      <Router>
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+      <BrowserRouter>
         <div className="min-h-screen bg-gray-100 pb-20">
           <Navbar />
           <main className="container mx-auto px-4 py-8">
+            <div className="w-full bg-white shadow-md mb-4 hidden md:block">
+              <div className="container mx-auto px-4 py-2 flex items-center">
+                <img
+                  src={logo}
+                  alt="App Logo"
+                  className="h-16 w-16 object-cover rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300"
+                />
+                <h1 className="text-2xl font-bold ml-4 text-gray-800">
+                  Training Diary
+                </h1>
+              </div>
+            </div>
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -84,7 +102,7 @@ function App() {
           </main>
           <MobileNav />
         </div>
-      </Router>
+      </BrowserRouter>
     </AuthProvider>
   );
 }
