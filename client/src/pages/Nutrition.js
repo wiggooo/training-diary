@@ -10,6 +10,7 @@ const Nutrition = () => {
   const [nutritionData, setNutritionData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(location.state?.showAddForm || false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [newNutrition, setNewNutrition] = useState({
     meals: [],
     totalDailyCalories: 0,
@@ -20,6 +21,16 @@ const Nutrition = () => {
   useEffect(() => {
     fetchNutritionData();
   }, []);
+
+  // Clear success message after 3 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   const fetchNutritionData = async () => {
     try {
@@ -35,7 +46,9 @@ const Nutrition = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setNutritionData(data);
+        // Sort by date, newest first
+        const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setNutritionData(sortedData);
       }
     } catch (error) {
       console.error('Error fetching nutrition data:', error);
@@ -99,6 +112,13 @@ const Nutrition = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
+      const nutritionToSubmit = {
+        ...newNutrition,
+        date: new Date().toISOString(),
+        totalDailyCalories: calculateTotalCalories(),
+        waterIntake: newNutrition.waterIntake // This is now in glasses
+      };
+
       const response = await fetch(`${API_URL}/api/nutrition`, {
         method: 'POST',
         headers: {
@@ -107,14 +127,12 @@ const Nutrition = () => {
         },
         credentials: 'include',
         mode: 'cors',
-        body: JSON.stringify({
-          ...newNutrition,
-          totalDailyCalories: calculateTotalCalories()
-        })
+        body: JSON.stringify(nutritionToSubmit)
       });
 
       if (response.ok) {
         const data = await response.json();
+        // Add the new data at the beginning of the array
         setNutritionData(prev => [data, ...prev]);
         setShowAddForm(false);
         setNewNutrition({
@@ -123,6 +141,7 @@ const Nutrition = () => {
           waterIntake: 0,
           notes: ''
         });
+        setSuccessMessage('Nutrition log added successfully!');
       }
     } catch (error) {
       console.error('Error adding nutrition data:', error);
@@ -143,6 +162,12 @@ const Nutrition = () => {
         <BackButton />
         <h1 className="text-3xl font-bold text-gray-900 ml-4">Nutrition</h1>
       </div>
+
+      {successMessage && (
+        <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
+          {successMessage}
+        </div>
+      )}
 
       <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -339,7 +364,7 @@ const Nutrition = () => {
                 </h3>
                 <div className="text-sm text-gray-500">
                   <div>Total calories: {day.totalDailyCalories}</div>
-                  <div>Water: {day.waterIntake} ml</div>
+                  <div>Water: {day.waterIntake} glasses ({(day.waterIntake * 250).toFixed(0)} ml)</div>
                 </div>
               </div>
 
@@ -350,19 +375,22 @@ const Nutrition = () => {
                     <div className="mt-2 space-y-2">
                       {meal.foods.map((food, foodIndex) => (
                         <div key={foodIndex} className="text-sm text-gray-600">
-                          {food.name} - {food.calories} kcal (P: {food.protein}g, C: {food.carbs}g, F: {food.fats}g)
+                          {food.name} - {food.calories} kcal
+                          <span className="text-gray-500">
+                            (P: {food.protein}g, C: {food.carbs}g, F: {food.fats}g)
+                          </span>
                         </div>
                       ))}
                     </div>
                     <div className="mt-2 text-sm text-gray-500">
-                      Total: {meal.totalCalories} kcal
+                      Total: {calculateMealCalories(meal)} kcal
                     </div>
                   </div>
                 ))}
               </div>
 
               {day.notes && (
-                <div className="mt-4">
+                <div className="mt-4 border-t pt-4">
                   <h4 className="text-sm font-medium text-gray-900">Notes</h4>
                   <p className="mt-1 text-sm text-gray-600">{day.notes}</p>
                 </div>
