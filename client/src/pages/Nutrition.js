@@ -201,42 +201,74 @@ const Nutrition = () => {
                       <div className="space-y-4">
                         {meal.foods.map((food, foodIndex) => (
                           <div key={foodIndex} className="grid grid-cols-1 gap-4">
-                            <input
-                              type="text"
-                              placeholder="Food name"
-                              value={food.name}
-                              onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'name', e.target.value)}
-                              className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
-                            />
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-gray-700">
+                                Food Name
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="e.g., Chicken Breast, Brown Rice"
+                                value={food.name}
+                                onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'name', e.target.value)}
+                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                              />
+                            </div>
                             <div className="grid grid-cols-2 gap-4">
-                              <input
-                                type="number"
-                                placeholder="Calories"
-                                value={food.calories}
-                                onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'calories', parseInt(e.target.value))}
-                                className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
-                              />
-                              <input
-                                type="number"
-                                placeholder="Protein (g)"
-                                value={food.protein}
-                                onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'protein', parseFloat(e.target.value))}
-                                className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
-                              />
-                              <input
-                                type="number"
-                                placeholder="Carbs (g)"
-                                value={food.carbs}
-                                onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'carbs', parseFloat(e.target.value))}
-                                className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
-                              />
-                              <input
-                                type="number"
-                                placeholder="Fats (g)"
-                                value={food.fats}
-                                onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'fats', parseFloat(e.target.value))}
-                                className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
-                              />
+                              <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                  Calories
+                                  <span className="text-xs text-gray-500 ml-1">(kcal)</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="e.g., 165"
+                                  value={food.calories}
+                                  onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'calories', parseInt(e.target.value))}
+                                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                  Protein
+                                  <span className="text-xs text-gray-500 ml-1">(grams)</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="e.g., 31"
+                                  value={food.protein}
+                                  onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'protein', parseFloat(e.target.value))}
+                                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                  Carbohydrates
+                                  <span className="text-xs text-gray-500 ml-1">(grams)</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="e.g., 0"
+                                  value={food.carbs}
+                                  onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'carbs', parseFloat(e.target.value))}
+                                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700">
+                                  Fats
+                                  <span className="text-xs text-gray-500 ml-1">(grams)</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="e.g., 3.6"
+                                  value={food.fats}
+                                  onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'fats', parseFloat(e.target.value))}
+                                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                                />
+                              </div>
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              Tip: For packaged foods, you can find these values on the nutrition label
                             </div>
                           </div>
                         ))}
@@ -249,23 +281,36 @@ const Nutrition = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-base font-medium text-gray-700 mb-2">Water Intake (ml)</label>
+              <div className="space-y-2">
+                <label className="block text-base font-medium text-gray-700">
+                  Water Intake
+                  <span className="text-sm text-gray-500 ml-2">(glasses, 1 glass ≈ 250ml)</span>
+                </label>
                 <input
                   type="number"
+                  min="0"
+                  step="0.5"
+                  placeholder="e.g., 8 (recommended daily intake)"
                   value={newNutrition.waterIntake}
-                  onChange={(e) => setNewNutrition(prev => ({ ...prev, waterIntake: parseInt(e.target.value) }))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                  onChange={(e) => setNewNutrition(prev => ({ ...prev, waterIntake: parseFloat(e.target.value) }))}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
                 />
+                <p className="text-xs text-gray-500">
+                  Tip: The recommended daily water intake is about 8 glasses (2 liters) for most adults
+                </p>
               </div>
 
-              <div>
-                <label className="block text-base font-medium text-gray-700 mb-2">Notes</label>
+              <div className="space-y-2">
+                <label className="block text-base font-medium text-gray-700">
+                  Notes
+                  <span className="text-sm text-gray-500 ml-2">(optional)</span>
+                </label>
                 <textarea
+                  placeholder="e.g., Felt energetic today, stayed within calorie goals"
                   value={newNutrition.notes}
                   onChange={(e) => setNewNutrition(prev => ({ ...prev, notes: e.target.value }))}
-                  rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                  rows="3"
                 />
               </div>
 
@@ -273,12 +318,14 @@ const Nutrition = () => {
                 Total daily calories: {calculateTotalCalories()}
               </div>
 
-              <button
-                type="submit"
-                className="w-full inline-flex justify-center py-3 px-4 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Save Nutrition Log
-              </button>
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Save Nutrition Log
+                </button>
+              </div>
             </form>
           </div>
         )}
