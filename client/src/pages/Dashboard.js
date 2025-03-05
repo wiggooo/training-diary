@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import API_URL from '../config/api';
+import UpdateChecker from '../components/UpdateChecker';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -63,7 +64,10 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome back, {user.name}!</h2>
+        <div className="flex justify-between items-start mb-4">
+          <h2 className="text-2xl font-bold text-gray-900">Welcome back, {user.name}!</h2>
+          <UpdateChecker />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/profile')}
