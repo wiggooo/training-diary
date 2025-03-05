@@ -26,8 +26,10 @@ async function generateIcons() {
   try {
     // First, read the source image and convert to PNG
     const sourceBuffer = await sharp(sourceImage)
+      .rotate(90) // Rotate 90 degrees clockwise
       .resize(512, 512, { // First resize to a good base size
-        fit: 'contain',
+        fit: 'cover', // Changed from contain to cover to fill the space
+        position: 'center', // Center the image
         background: { r: 255, g: 255, b: 255 }
       })
       .png() // Convert to PNG
@@ -37,7 +39,8 @@ async function generateIcons() {
     for (const { size, name } of sizes) {
       await sharp(sourceBuffer)
         .resize(size, size, {
-          fit: 'contain',
+          fit: 'cover', // Changed from contain to cover
+          position: 'center', // Center the image
           background: { r: 255, g: 255, b: 255 }
         })
         .toFile(path.join(outputDir, name));
@@ -47,7 +50,10 @@ async function generateIcons() {
 
     // Generate favicon.ico (contains multiple sizes)
     const favicon32 = await sharp(sourceBuffer)
-      .resize(32, 32)
+      .resize(32, 32, {
+        fit: 'cover',
+        position: 'center'
+      })
       .toBuffer();
 
     // Use the 32x32 version as favicon.ico
