@@ -32,76 +32,85 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-function App() {
+// Main app content
+const AppContent = () => {
   const { user } = useAuth();
   const [showSplash, setShowSplash] = useState(true);
 
   return (
-    <AuthProvider>
+    <>
       {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
-      <BrowserRouter>
-        <div className="min-h-screen bg-gray-100 pb-20">
-          <Navbar />
-          <main className="container mx-auto px-4 py-8">
-            <div className="w-full bg-white shadow-md mb-4 hidden md:block">
-              <div className="container mx-auto px-4 py-2 flex items-center">
-                <img
-                  src={logo}
-                  alt="App Logo"
-                  className="h-16 w-16 object-cover rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300"
-                />
-                <h1 className="text-2xl font-bold ml-4 text-gray-800">
-                  Training Diary
-                </h1>
-              </div>
+      <div className="min-h-screen bg-gray-100 pb-20">
+        <Navbar />
+        <main className="container mx-auto px-4 py-8">
+          <div className="w-full bg-white shadow-md mb-4 hidden md:block">
+            <div className="container mx-auto px-4 py-2 flex items-center">
+              <img
+                src={logo}
+                alt="App Logo"
+                className="h-16 w-16 object-cover rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300"
+              />
+              <h1 className="text-2xl font-bold ml-4 text-gray-800">
+                Training Diary
+              </h1>
             </div>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/workouts"
-                element={
-                  <ProtectedRoute>
-                    <Workouts />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/nutrition"
-                element={
-                  <ProtectedRoute>
-                    <Nutrition />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/statistics"
-                element={
-                  <ProtectedRoute>
-                    <Statistics />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </main>
-          <MobileNav />
-        </div>
+          </div>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/workouts"
+              element={
+                <ProtectedRoute>
+                  <Workouts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/nutrition"
+              element={
+                <ProtectedRoute>
+                  <Nutrition />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/statistics"
+              element={
+                <ProtectedRoute>
+                  <Statistics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </main>
+        <MobileNav />
+      </div>
+    </>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <AppContent />
       </BrowserRouter>
     </AuthProvider>
   );
