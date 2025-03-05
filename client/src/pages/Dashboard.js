@@ -1,55 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import API_URL from '../config/api';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [recentWorkouts, setRecentWorkouts] = useState([]);
   const [recentNutrition, setRecentNutrition] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const [workoutsResponse, nutritionResponse] = await Promise.all([
-          fetch(`${API_URL}/api/workouts/recent`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            mode: 'cors'
-          }),
-          fetch(`${API_URL}/api/nutrition/recent`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            mode: 'cors'
-          })
-        ]);
-
-        if (workoutsResponse.ok) {
-          const workoutsData = await workoutsResponse.json();
-          setRecentWorkouts(workoutsData);
-        }
-
-        if (nutritionResponse.ok) {
-          const nutritionData = await nutritionResponse.json();
-          setRecentNutrition(nutritionData);
-        }
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDashboardData();
   }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const [workoutsResponse, nutritionResponse] = await Promise.all([
+        fetch(`${API_URL}/api/workouts/recent`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          mode: 'cors'
+        }),
+        fetch(`${API_URL}/api/nutrition/recent`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          mode: 'cors'
+        })
+      ]);
+
+      if (workoutsResponse.ok) {
+        const workoutsData = await workoutsResponse.json();
+        setRecentWorkouts(workoutsData);
+      }
+
+      if (nutritionResponse.ok) {
+        const nutritionData = await nutritionResponse.json();
+        setRecentNutrition(nutritionData);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -64,18 +65,27 @@ const Dashboard = () => {
       <div className="bg-white shadow rounded-lg p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome back, {user.name}!</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-indigo-50 p-4 rounded-lg">
+          <button
+            onClick={() => navigate('/profile')}
+            className="bg-indigo-50 p-4 rounded-lg hover:bg-indigo-100 transition-colors"
+          >
             <h3 className="text-lg font-semibold text-indigo-900">Weekly Goal</h3>
             <p className="text-2xl font-bold text-indigo-600">{user.goals?.weeklyWorkouts || 0} workouts</p>
-          </div>
-          <div className="bg-green-50 p-4 rounded-lg">
+          </button>
+          <button
+            onClick={() => navigate('/profile')}
+            className="bg-green-50 p-4 rounded-lg hover:bg-green-100 transition-colors"
+          >
             <h3 className="text-lg font-semibold text-green-900">Daily Calories</h3>
             <p className="text-2xl font-bold text-green-600">{user.goals?.dailyCalories || 0} kcal</p>
-          </div>
-          <div className="bg-blue-50 p-4 rounded-lg">
+          </button>
+          <button
+            onClick={() => navigate('/profile')}
+            className="bg-blue-50 p-4 rounded-lg hover:bg-blue-100 transition-colors"
+          >
             <h3 className="text-lg font-semibold text-blue-900">Water Intake</h3>
             <p className="text-2xl font-bold text-blue-600">{user.goals?.dailyWater || 0} ml</p>
-          </div>
+          </button>
         </div>
       </div>
 
@@ -83,9 +93,17 @@ const Dashboard = () => {
         <div className="bg-white shadow rounded-lg p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-900">Recent Workouts</h3>
-            <Link to="/workouts" className="text-indigo-600 hover:text-indigo-800">
-              View all
-            </Link>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => navigate('/workouts', { state: { showAddForm: true } })}
+                className="text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1 rounded-md text-sm"
+              >
+                Add New
+              </button>
+              <Link to="/workouts" className="text-indigo-600 hover:text-indigo-800 px-3 py-1">
+                View all
+              </Link>
+            </div>
           </div>
           {recentWorkouts.length > 0 ? (
             <div className="space-y-4">
@@ -123,9 +141,17 @@ const Dashboard = () => {
         <div className="bg-white shadow rounded-lg p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-900">Recent Nutrition</h3>
-            <Link to="/nutrition" className="text-indigo-600 hover:text-indigo-800">
-              View all
-            </Link>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => navigate('/nutrition', { state: { showAddForm: true } })}
+                className="text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1 rounded-md text-sm"
+              >
+                Add New
+              </button>
+              <Link to="/nutrition" className="text-indigo-600 hover:text-indigo-800 px-3 py-1">
+                View all
+              </Link>
+            </div>
           </div>
           {recentNutrition.length > 0 ? (
             <div className="space-y-4">

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
 import API_URL from '../config/api';
 import BackButton from '../components/BackButton';
 
 const Nutrition = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const [nutritionData, setNutritionData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(location.state?.showAddForm || false);
   const [newNutrition, setNewNutrition] = useState({
     meals: [],
     totalDailyCalories: 0,
@@ -157,12 +159,12 @@ const Nutrition = () => {
           <div className="bg-white shadow rounded-lg p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <div className="flex justify-between items-center">
-                  <label className="block text-sm font-medium text-gray-700">Meals</label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-base font-medium text-gray-700">Meals</label>
                   <button
                     type="button"
                     onClick={handleAddMeal}
-                    className="text-sm text-indigo-600 hover:text-indigo-800"
+                    className="text-base text-indigo-600 hover:text-indigo-800"
                   >
                     Add Meal
                   </button>
@@ -181,7 +183,7 @@ const Nutrition = () => {
                               )
                             }));
                           }}
-                          className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                          className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
                         >
                           <option value="breakfast">Breakfast</option>
                           <option value="lunch">Lunch</option>
@@ -191,53 +193,55 @@ const Nutrition = () => {
                         <button
                           type="button"
                           onClick={() => handleAddFood(mealIndex)}
-                          className="text-sm text-indigo-600 hover:text-indigo-800"
+                          className="text-base text-indigo-600 hover:text-indigo-800"
                         >
                           Add Food
                         </button>
                       </div>
                       <div className="space-y-4">
                         {meal.foods.map((food, foodIndex) => (
-                          <div key={foodIndex} className="grid grid-cols-5 gap-4">
+                          <div key={foodIndex} className="grid grid-cols-1 gap-4">
                             <input
                               type="text"
                               placeholder="Food name"
                               value={food.name}
                               onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'name', e.target.value)}
-                              className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                              className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
                             />
-                            <input
-                              type="number"
-                              placeholder="Calories"
-                              value={food.calories}
-                              onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'calories', parseInt(e.target.value))}
-                              className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            />
-                            <input
-                              type="number"
-                              placeholder="Protein (g)"
-                              value={food.protein}
-                              onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'protein', parseFloat(e.target.value))}
-                              className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            />
-                            <input
-                              type="number"
-                              placeholder="Carbs (g)"
-                              value={food.carbs}
-                              onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'carbs', parseFloat(e.target.value))}
-                              className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            />
-                            <input
-                              type="number"
-                              placeholder="Fats (g)"
-                              value={food.fats}
-                              onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'fats', parseFloat(e.target.value))}
-                              className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            />
+                            <div className="grid grid-cols-2 gap-4">
+                              <input
+                                type="number"
+                                placeholder="Calories"
+                                value={food.calories}
+                                onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'calories', parseInt(e.target.value))}
+                                className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                              />
+                              <input
+                                type="number"
+                                placeholder="Protein (g)"
+                                value={food.protein}
+                                onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'protein', parseFloat(e.target.value))}
+                                className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                              />
+                              <input
+                                type="number"
+                                placeholder="Carbs (g)"
+                                value={food.carbs}
+                                onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'carbs', parseFloat(e.target.value))}
+                                className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                              />
+                              <input
+                                type="number"
+                                placeholder="Fats (g)"
+                                value={food.fats}
+                                onChange={(e) => handleFoodChange(mealIndex, foodIndex, 'fats', parseFloat(e.target.value))}
+                                className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
+                              />
+                            </div>
                           </div>
                         ))}
                       </div>
-                      <div className="mt-4 text-sm text-gray-500">
+                      <div className="mt-4 text-base text-gray-500">
                         Total calories for this meal: {calculateMealCalories(meal)}
                       </div>
                     </div>
@@ -246,32 +250,32 @@ const Nutrition = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Water Intake (ml)</label>
+                <label className="block text-base font-medium text-gray-700 mb-2">Water Intake (ml)</label>
                 <input
                   type="number"
                   value={newNutrition.waterIntake}
                   onChange={(e) => setNewNutrition(prev => ({ ...prev, waterIntake: parseInt(e.target.value) }))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Notes</label>
+                <label className="block text-base font-medium text-gray-700 mb-2">Notes</label>
                 <textarea
                   value={newNutrition.notes}
                   onChange={(e) => setNewNutrition(prev => ({ ...prev, notes: e.target.value }))}
                   rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-2"
                 />
               </div>
 
-              <div className="text-sm text-gray-500">
+              <div className="text-base text-gray-500">
                 Total daily calories: {calculateTotalCalories()}
               </div>
 
               <button
                 type="submit"
-                className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="w-full inline-flex justify-center py-3 px-4 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Save Nutrition Log
               </button>

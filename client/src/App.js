@@ -9,6 +9,7 @@ import Workouts from './pages/Workouts';
 import Nutrition from './pages/Nutrition';
 import Statistics from './pages/Statistics';
 import Profile from './pages/Profile';
+import MobileNav from './components/MobileNav';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -33,7 +34,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-gray-100 pb-20">
           <Navbar />
           <main className="container mx-auto px-4 py-8">
             <Routes>
@@ -81,6 +82,7 @@ function App() {
               />
             </Routes>
           </main>
+          <MobileNav />
         </div>
       </Router>
     </AuthProvider>
