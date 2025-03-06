@@ -53,8 +53,8 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// Delete a nutrition log
-router.delete('/:id', auth, async (req, res) => {
+// Delete a meal from a nutrition log
+router.delete('/:id/meals/:mealIndex', auth, async (req, res) => {
   try {
     const nutritionLog = await Nutrition.findOne({
       _id: req.params.id,
@@ -65,7 +65,34 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Nutrition log not found' });
     }
 
-    await nutritionLog.remove();
+    const mealIndex = parseInt(req.params.mealIndex);
+    if (mealIndex < 0 || mealIndex >= nutritionLog.meals.length) {
+      return res.status(400).json({ message: 'Invalid meal index' });
+    }
+
+    // Remove the meal at the specified index
+    nutritionLog.meals.splice(mealIndex, 1);
+    await nutritionLog.save();
+
+    res.json({ message: 'Meal deleted' });
+  } catch (error) {
+    console.error('Error deleting meal:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Delete an entire nutrition log
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const result = await Nutrition.deleteOne({
+      _id: req.params.id,
+      userId: req.user._id
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'Nutrition log not found' });
+    }
+
     res.json({ message: 'Nutrition log deleted' });
   } catch (error) {
     console.error('Error deleting nutrition log:', error);

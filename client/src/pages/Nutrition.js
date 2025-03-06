@@ -230,6 +230,48 @@ const Nutrition = () => {
     }
   };
 
+  const handleDeleteMeal = async (dayId, mealIndex) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/nutrition/${dayId}/meals/${mealIndex}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        mode: 'cors'
+      });
+
+      if (response.ok) {
+        fetchNutritionData();
+      }
+    } catch (error) {
+      console.error('Error deleting meal:', error);
+    }
+  };
+
+  const handleDeleteNutritionLog = async (dayId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/api/nutrition/${dayId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        mode: 'cors'
+      });
+
+      if (response.ok) {
+        fetchNutritionData();
+      }
+    } catch (error) {
+      console.error('Error deleting nutrition log:', error);
+    }
+  };
+
   const filteredSavedFoods = savedFoods.filter(food =>
     food.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -540,23 +582,50 @@ const Nutrition = () => {
                 <h3 className="text-lg font-medium text-gray-900">
                   {new Date(day.date).toLocaleDateString()}
                 </h3>
-                <div className="text-sm text-gray-500">
-                  <div>Total calories: {day.totalDailyCalories}</div>
-                  <div>Water: {day.waterIntake} glasses ({(day.waterIntake * 250).toFixed(0)} ml)</div>
+                <div className="flex items-center space-x-2">
+                  <div className="text-sm text-gray-500">
+                    <div>Total calories: {day.totalDailyCalories}</div>
+                    <div>Water: {day.waterIntake} glasses ({(day.waterIntake * 250).toFixed(0)} ml)</div>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteNutritionLog(day._id)}
+                    className="text-red-600 hover:text-red-800 p-1"
+                    title="Delete nutrition log"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
                 </div>
               </div>
 
               <div className="mt-4 space-y-4">
                 {day.meals.map((meal, index) => (
                   <div key={index} className="border-t pt-4">
-                    <h4 className="text-sm font-medium text-gray-900 capitalize">{meal.name}</h4>
-                    <div className="mt-2 space-y-2">
-                      <div className="text-sm text-gray-600">
-                        {meal.calories} kcal
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-900 capitalize">{meal.name}</h4>
+                        <div className="mt-2 space-y-2">
+                          <div className="text-sm text-gray-600">
+                            {meal.calories} kcal
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            P: {meal.protein}g | C: {meal.carbs}g | F: {meal.fat}g
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            Serving: {meal.servingSize}{meal.servingUnit}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="mt-2 text-sm text-gray-500">
-                      Total: {calculateMealCalories(meal)} kcal
+                      <button
+                        onClick={() => handleDeleteMeal(day._id, index)}
+                        className="text-red-600 hover:text-red-800 p-1"
+                        title="Delete meal"
+                      >
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 ))}

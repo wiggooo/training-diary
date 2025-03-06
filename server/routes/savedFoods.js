@@ -41,17 +41,16 @@ router.post('/', auth, async (req, res) => {
 router.delete('/:id', auth, async (req, res) => {
   try {
     console.log('Attempting to delete saved food:', req.params.id);
-    const savedFood = await SavedFood.findOne({
+    const result = await SavedFood.deleteOne({
       _id: req.params.id,
       userId: req.user._id
     });
 
-    if (!savedFood) {
+    if (result.deletedCount === 0) {
       console.log('Saved food not found:', req.params.id);
       return res.status(404).json({ message: 'Saved food not found' });
     }
 
-    await savedFood.remove();
     console.log('Saved food deleted successfully:', req.params.id);
     res.json({ message: 'Saved food deleted' });
   } catch (error) {
