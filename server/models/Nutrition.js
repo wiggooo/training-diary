@@ -50,7 +50,8 @@ const nutritionSchema = new mongoose.Schema({
   waterIntake: {
     type: Number,
     default: 0,
-    min: 0
+    min: 0,
+    required: false
   },
   createdAt: {
     type: Date,
