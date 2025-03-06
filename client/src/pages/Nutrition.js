@@ -152,6 +152,12 @@ const Nutrition = () => {
     
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        setSaveFoodError('You must be logged in to save foods');
+        return;
+      }
+
+      console.log('Attempting to save food to:', `${API_URL}/api/saved-foods`);
       const response = await fetch(`${API_URL}/api/saved-foods`, {
         method: 'POST',
         headers: {
@@ -163,30 +169,43 @@ const Nutrition = () => {
         body: JSON.stringify(newSavedFood)
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        fetchSavedFoods();
-        setNewSavedFood({
-          name: '',
-          calories: '',
-          protein: '',
-          carbs: '',
-          fat: '',
-          servingSize: '',
-          servingUnit: 'g'
-        });
-        setShowSaveFoodForm(false);
-        setSaveFoodSuccess('Food saved successfully!');
-      } else {
+      if (!response.ok) {
+        if (response.status === 404) {
+          setSaveFoodError('Server not found. Please check if the backend is running.');
+          return;
+        }
+        if (response.status === 401) {
+          setSaveFoodError('Your session has expired. Please log in again.');
+          return;
+        }
+        const data = await response.json();
         setSaveFoodError(data.message || 'Failed to save food');
         if (data.details) {
           console.error('Validation errors:', data.details);
         }
+        return;
       }
+
+      const data = await response.json();
+      fetchSavedFoods();
+      setNewSavedFood({
+        name: '',
+        calories: '',
+        protein: '',
+        carbs: '',
+        fat: '',
+        servingSize: '',
+        servingUnit: 'g'
+      });
+      setShowSaveFoodForm(false);
+      setSaveFoodSuccess('Food saved successfully!');
     } catch (error) {
       console.error('Error saving food:', error);
-      setSaveFoodError('Failed to save food. Please try again.');
+      if (error.message.includes('Failed to fetch')) {
+        setSaveFoodError('Unable to connect to the server. Please check your internet connection.');
+      } else {
+        setSaveFoodError('Failed to save food. Please try again.');
+      }
     }
   };
 
@@ -216,11 +235,50 @@ const Nutrition = () => {
   );
 
   const calculateMealCalories = (meal) => {
+    if (!meal || !meal.foods) return 0;
     return meal.foods.reduce((total, food) => total + (food.calories || 0), 0);
   };
 
   const calculateTotalCalories = () => {
+    if (!newNutrition.meals) return 0;
     return newNutrition.meals.reduce((total, meal) => total + calculateMealCalories(meal), 0);
+  };
+
+  const scaleNutritionValues = (food, newWeight) => {
+    const scaleFactor = newWeight / food.servingSize;
+    return {
+      ...food,
+      servingSize: newWeight,
+      calories: Math.round(food.calories * scaleFactor),
+      protein: Math.round(food.protein * scaleFactor * 10) / 10,
+      carbs: Math.round(food.carbs * scaleFactor * 10) / 10,
+      fat: Math.round(food.fat * scaleFactor * 10) / 10
+    };
+  };
+
+  const handleServingSizeChange = (food, newSize) => {
+    const scaledFood = scaleNutritionValues(food, parseFloat(newSize));
+    setNewMeal({
+      ...newMeal,
+      calories: scaledFood.calories,
+      protein: scaledFood.protein,
+      carbs: scaledFood.carbs,
+      fat: scaledFood.fat,
+      servingSize: scaledFood.servingSize
+    });
+  };
+
+  const handleSavedFoodClick = (food) => {
+    setNewMeal({
+      name: food.name,
+      calories: food.calories,
+      protein: food.protein,
+      carbs: food.carbs,
+      fat: food.fat,
+      servingSize: food.servingSize,
+      servingUnit: food.servingUnit
+    });
+    setShowAddForm(true);
   };
 
   if (loading) {
@@ -435,7 +493,7 @@ const Nutrition = () => {
                     <input
                       type="number"
                       value={newMeal.servingSize}
-                      onChange={(e) => setNewMeal({ ...newMeal, servingSize: e.target.value })}
+                      onChange={(e) => handleServingSizeChange(newMeal, e.target.value)}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                       required
                     />
@@ -547,18 +605,7 @@ const Nutrition = () => {
                   <p>Serving: {food.servingSize}{food.servingUnit}</p>
                 </div>
                 <button
-                  onClick={() => {
-                    setNewMeal({
-                      name: food.name,
-                      calories: food.calories,
-                      protein: food.protein,
-                      carbs: food.carbs,
-                      fat: food.fat,
-                      servingSize: food.servingSize,
-                      servingUnit: food.servingUnit
-                    });
-                    setShowAddForm(true);
-                  }}
+                  onClick={() => handleSavedFoodClick(food)}
                   className="mt-3 w-full bg-indigo-50 text-indigo-700 px-3 py-1 rounded-md hover:bg-indigo-100 transition-colors"
                 >
                   Add to Today's Meals
