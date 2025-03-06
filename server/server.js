@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const authRouter = require('./routes/auth');
 const workoutsRouter = require('./routes/workouts');
+const workoutPlansRouter = require('./routes/workoutPlans');
 const nutritionRouter = require('./routes/nutrition');
 const savedFoodsRouter = require('./routes/savedFoods');
 
@@ -46,6 +47,7 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRouter);
 app.use('/api/workouts', workoutsRouter);
+app.use('/api/workout-plans', workoutPlansRouter);
 app.use('/api/nutrition', nutritionRouter);
 app.use('/api/saved-foods', savedFoodsRouter);
 
