@@ -37,6 +37,8 @@ const Nutrition = () => {
     servingSize: '',
     servingUnit: 'g'
   });
+  const [saveFoodError, setSaveFoodError] = useState('');
+  const [saveFoodSuccess, setSaveFoodSuccess] = useState('');
 
   useEffect(() => {
     fetchNutritionData();
@@ -145,6 +147,9 @@ const Nutrition = () => {
 
   const handleSaveFood = async (e) => {
     e.preventDefault();
+    setSaveFoodError('');
+    setSaveFoodSuccess('');
+    
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/api/saved-foods`, {
@@ -158,6 +163,8 @@ const Nutrition = () => {
         body: JSON.stringify(newSavedFood)
       });
 
+      const data = await response.json();
+
       if (response.ok) {
         fetchSavedFoods();
         setNewSavedFood({
@@ -170,9 +177,16 @@ const Nutrition = () => {
           servingUnit: 'g'
         });
         setShowSaveFoodForm(false);
+        setSaveFoodSuccess('Food saved successfully!');
+      } else {
+        setSaveFoodError(data.message || 'Failed to save food');
+        if (data.details) {
+          console.error('Validation errors:', data.details);
+        }
       }
     } catch (error) {
       console.error('Error saving food:', error);
+      setSaveFoodError('Failed to save food. Please try again.');
     }
   };
 
@@ -252,6 +266,16 @@ const Nutrition = () => {
         {showSaveFoodForm && (
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4">Save New Food</h3>
+            {saveFoodError && (
+              <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-md">
+                {saveFoodError}
+              </div>
+            )}
+            {saveFoodSuccess && (
+              <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
+                {saveFoodSuccess}
+              </div>
+            )}
             <form onSubmit={handleSaveFood} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
