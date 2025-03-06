@@ -40,11 +40,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-// 404 handler
+// 404 handler - return JSON for all routes
 app.use((req, res) => {
   res.status(404).json({ message: 'Not Found' });
 });
 
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
