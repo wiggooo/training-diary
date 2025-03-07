@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (email, password) => {
+  const register = async (name, email, password) => {
     try {
       console.log('Registering with API URL:', API_URL);
       const response = await fetch(`${API_URL}/api/auth/register`, {
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ name, email, password })
       });
 
       const data = await response.json();
