@@ -299,24 +299,23 @@ const Nutrition = () => {
   };
 
   const handleServingSizeChange = (food, newSize) => {
-    // Only scale if we have a valid number
+    // Always update the serving size input
+    setNewMeal(prevMeal => ({
+      ...prevMeal,
+      servingSize: newSize
+    }));
+
+    // Only scale if we have a complete valid number
     const parsedSize = parseFloat(newSize);
     if (!isNaN(parsedSize) && parsedSize > 0) {
       const scaledFood = scaleNutritionValues(food, parsedSize);
-      setNewMeal({
-        ...newMeal,
+      setNewMeal(prevMeal => ({
+        ...prevMeal,
         calories: scaledFood.calories,
         protein: scaledFood.protein,
         carbs: scaledFood.carbs,
-        fat: scaledFood.fat,
-        servingSize: scaledFood.servingSize
-      });
-    } else {
-      // Just update the serving size without scaling other values
-      setNewMeal({
-        ...newMeal,
-        servingSize: newSize
-      });
+        fat: scaledFood.fat
+      }));
     }
   };
 
